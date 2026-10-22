@@ -187,7 +187,6 @@ class AlbumApp:
         self.root.protocol("WM_DELETE_WINDOW", self.close_app)
         self.discover_album()
 
-    # ------------------------------------------------------------ UI
 
     def setup_ui(self):
         self.card = tk.Frame(
@@ -268,7 +267,6 @@ class AlbumApp:
         self.hero = tk.Frame(parent, bg=CARD)
         self.hero.pack(fill="x")
 
-        # Fixed-size cover container
         self.cover_box = tk.Frame(
             self.hero,
             bg=PANEL,
@@ -288,7 +286,6 @@ class AlbumApp:
         )
         self.cover_label.pack(fill="both", expand=True)
 
-        # Album information
         self.info = tk.Frame(self.hero, bg=CARD)
         self.info.pack(side="left", fill="both", expand=True)
 
@@ -349,10 +346,8 @@ class AlbumApp:
             self.info, "Tracks: —"
         )
 
-        # Button lives in the info column so it's always visible
         self._build_button(self.info)
 
-        # Adapt text wrapping to the available window width.
         self.info.bind("<Configure>", self._resize_info_text)
 
     def _resize_info_text(self, event):
@@ -520,7 +515,6 @@ class AlbumApp:
     def _button_leave(self, _event):
         self.discover_button.configure(bg=ACCENT)
 
-    # -------------------------------------------------------- Track rows
 
     def _clear_tracks(self):
         for child in self.track_frame.winfo_children():
@@ -586,7 +580,6 @@ class AlbumApp:
             sticky="e",
         )
 
-    # --------------------------------------------------------- Discovery
 
     def discover_album(self):
         if self.loading:
@@ -676,7 +669,6 @@ class AlbumApp:
                 text=f"Tracks: {len(tracks)}"
             )
 
-            # Cover art
             self.current_image = None
 
             if cover_path:
@@ -700,7 +692,6 @@ class AlbumApp:
             else:
                 self._show_missing_cover()
 
-            # Tracklist
             self._clear_tracks()
 
             if tracks:
@@ -774,8 +765,13 @@ class AlbumApp:
         self.track_canvas.unbind_all("<MouseWheel>")
         self.root.destroy()
 
-        
+
 if __name__ == "__main__":
     root = tk.Tk()
+
+    icon = tk.PhotoImage(file="assets/icon.png")
+    root.iconphoto(True, icon)
+    root.iconbitmap("assets/app_icon.ico")
+
     app = AlbumApp(root)
     root.mainloop()
