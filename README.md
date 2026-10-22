@@ -35,6 +35,10 @@ Run the application:
 ```bash
 python main.py
 ```
+## Download
+
+Download the latest Windows version from
+[GitHub Releases](../../releases/latest).
 
 ---
 
