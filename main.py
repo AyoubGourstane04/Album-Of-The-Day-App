@@ -7,6 +7,9 @@ import tkinter as tk
 from PIL import Image, ImageTk
 import threading
 from tkinter import ttk, messagebox
+import os
+import sys
+
 
 BASE_URL = "https://musicbrainz.org/ws/2"
 COVER_URL = "https://coverartarchive.org"
@@ -34,6 +37,16 @@ FONT = "Segoe UI"
 COVER_SIZE = 190
 
 
+def resource_path(relative_path):
+    base_path = getattr(
+        sys,
+        "_MEIPASS",
+        os.path.abspath(".")
+    )
+    return os.path.join(base_path, relative_path)
+
+
+
 last_request_time = 0
 
 def mb_request(endpoint : str, params=None):
@@ -55,7 +68,6 @@ def mb_request(endpoint : str, params=None):
     response.raise_for_status()
 
     return response.json()
-
 
 
 
@@ -768,10 +780,14 @@ class AlbumApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    root.title("Album of the Day")
 
-    icon = tk.PhotoImage(file="assets/icon.png")
+    icon_png = resource_path("assets/icon.png")
+    icon_ico = resource_path("assets/app_icon.ico")
+
+    icon = tk.PhotoImage(file=icon_png)
     root.iconphoto(True, icon)
-    root.iconbitmap("assets/app_icon.ico")
+    root.iconbitmap(icon_ico)
 
     app = AlbumApp(root)
     root.mainloop()
