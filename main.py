@@ -1,7 +1,9 @@
+from pathlib import Path
 import time
 import requests
 import random
-
+import tkinter as tk
+from PIL import Image, ImageTk
 
 BASE_URL = "https://musicbrainz.org/ws/2"
 
@@ -32,6 +34,56 @@ def mb_request(endpoint : str, params=None):
     return response.json()
 
 
+def download_album_cover(release_group_id):
+    covers_dir = Path("covers")
+    covers_dir.mkdir(exist_ok=True)
+
+    cover_path = covers_dir / f"{release_group_id}.jpg"
+
+    url = (
+        f"https://coverartarchive.org/"
+        f"release-group/{release_group_id}/front"
+    )
+
+    try:
+        response = requests.get(
+            url,
+            headers=HEADERS,
+            timeout=20
+        )
+
+        if response.status_code == 404:
+            print("No cover art available for this album")
+            return None
+
+        response.raise_for_status()
+
+        cover_path.write_bytes(response.content)
+
+        print(f"Cover saved to : {cover_path}")
+        return cover_path
+
+    except requests.RequestException as error:
+        print(f"Could not download album cover: {error}")
+        return None
+
+def show_cover(cover_path):
+    if cover_path is None:
+        return
+
+    root = tk.Tk()
+    root.title("Album of the Day")
+    root.geometry("500x500")
+
+    image = Image.open(cover_path)
+    image.thumbnail((400, 400))
+
+    photo = ImageTk.PhotoImage(image)
+
+    cover_label = tk.Label(root, image=photo)
+    cover_label.pack(pady=20)
+
+    root.mainloop()
 
 
 def get_random_album():
@@ -47,6 +99,8 @@ def get_random_album():
 
     album = random.choice(albums)
     album_id = album["id"]
+
+    cover_path = download_album_cover(album_id)
 
     releases = mb_request("release/", {
             "release-group": album_id,
@@ -97,6 +151,8 @@ def get_random_album():
                 print(f"{track.get('position', '?')}. {title} ({duration})")
 
     print("=" * 45)
+
+    show_cover(cover_path)
 
 
     
